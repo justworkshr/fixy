@@ -219,14 +219,30 @@ describe 'Generating a Record' do
   end
 
   context 'when the value proc raises an error' do
-    class PersonRecordWithError < Fixy::Record
+    class PersonRecordWithErrorA < Fixy::Record
       include Fixy::Formatter::Alphanumeric
       set_record_length 20
       set_line_ending Fixy::Record::LINE_ENDING_CRLF
-      field(:description , 20, '1-20', :alphanumeric) { non_existant_var }
+      field(:description, 20, '1-20', :alphanumeric) { non_existant_var }
     end
-    it 'includes the field name in the error message' do
-      expect { PersonRecordWithError.new.generate }.to raise_error(NameError, /field name: description/)
+    it 'includes the class and field name in the error message' do
+      expect { PersonRecordWithErrorA.new.generate }.to raise_error(
+        NameError, /PersonRecordWithErrorA#description/
+      )
+    end
+  end
+
+  context 'when the built-in formatter raises an error' do
+    class PersonRecordWithErrorB < Fixy::Record
+      include Fixy::Formatter::Numeric
+      set_record_length 20
+      set_line_ending Fixy::Record::LINE_ENDING_CRLF
+      field(:description, 20, '1-20', :numeric) { -6 }
+    end
+    it 'includes the class and field name in the error message' do
+      expect { PersonRecordWithErrorB.new.generate }.to raise_error(
+        ArgumentError, "Invalid Input (only digits are accepted) (input: -6) (PersonRecordWithErrorB#description)"
+      )
     end
   end
 end
