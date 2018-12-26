@@ -1,3 +1,7 @@
+## v0.3.0
+
+* Include class and field name when a field fails validation or raises an error
+
 ## v0.2.0
 
 * Numeric fields can be nil to zero-pad

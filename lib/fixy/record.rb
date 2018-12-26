@@ -54,13 +54,7 @@ module Fixy
         end
 
         if value.is_a? Proc
-          define_method(name) do
-            begin
-              self.instance_exec(&value)
-            rescue => e
-              raise e, "#{e.message} (field name: #{name})"
-            end
-          end
+          define_method(name) { self.instance_exec(&value) }
         else
           define_method(name) { value }
         end
@@ -137,10 +131,8 @@ module Fixy
         raise StandardError, "Undefined field for position #{current_position}" unless field
 
         # We will first retrieve the value, then format it
-        method          = field[:name]
-        value           = send(method)
-        formatted_value = format_value(value, field[:size], field[:type])
-        formatted_value = decorator.field(formatted_value, current_record, current_position, method, field[:size], field[:type])
+        formatted_value = format_value(field[:name], field[:size], field[:type])
+        formatted_value = decorator.field(formatted_value, current_record, current_position, field[:name], field[:size], field[:type])
 
         output << formatted_value
         current_position = field[:to] + 1
@@ -157,8 +149,11 @@ module Fixy
     private
 
     # Format value with user defined formatters.
-    def format_value(value, size, type)
+    def format_value(name, size, type)
+      value = send(name)
       send("format_#{type}".to_sym, value, size)
+    rescue => e
+      raise e, "#{self.class.name}##{name}: #{e.message}"
     end
 
     # Retrieves the list of record fields that were set through the class methods.
