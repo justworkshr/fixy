@@ -153,7 +153,7 @@ module Fixy
       value = send(name)
       send("format_#{type}".to_sym, value, size)
     rescue => e
-      raise e, "#{e.message} (#{self.class.name}##{name})"
+      raise e, "#{self.class.name}##{name}: #{e.message}"
     end
 
     # Retrieves the list of record fields that were set through the class methods.

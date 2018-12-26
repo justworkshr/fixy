@@ -227,7 +227,7 @@ describe 'Generating a Record' do
     end
     it 'includes the class and field name in the error message' do
       expect { PersonRecordWithErrorA.new.generate }.to raise_error(
-        NameError, /PersonRecordWithErrorA#description/
+        NameError, /^PersonRecordWithErrorA#description/
       )
     end
   end
@@ -241,7 +241,7 @@ describe 'Generating a Record' do
     end
     it 'includes the class and field name in the error message' do
       expect { PersonRecordWithErrorB.new.generate }.to raise_error(
-        ArgumentError, "Invalid Input (only digits are accepted) (input: -6) (PersonRecordWithErrorB#description)"
+        ArgumentError, "PersonRecordWithErrorB#description: Invalid Input (only digits are accepted) (input: -6)"
       )
     end
   end
