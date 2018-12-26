@@ -14,13 +14,11 @@ module Fixy
       #
 
       def format_amount(input, length)
-        value = (('%0' << length.to_s << 'd') % integerize(input.abs * 100))
+        input = (('%0' << length.to_s << 'd') % integerize(input.abs * 100))
 
-        if value.length > length
-          raise ArgumentError, "Insufficient length for provided amount (input: #{input.to_s}, length: #{length}, required length: #{value.length})"
-        else
-          value
-        end
+        raise ArgumentError, "Insufficient length for provided input (input: #{input}, length: #{length}, required length: #{input.length})" if input.length > length
+
+        input
       end
     end
   end
