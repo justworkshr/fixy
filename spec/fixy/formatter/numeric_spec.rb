@@ -9,32 +9,49 @@ describe Fixy::Formatter::Numeric do
 
   describe '#format_numeric' do
     subject(:format_numeric) { proxy.format_numeric(input, length) }
+
     let(:length) { 10 }
 
-    context 'when input is nil' do
-      let(:input) { nil }
-      it { is_expected.to eq('0' * length) }
-    end
+    [
+      [nil,   6, '000000'],
+      ['',    6, '000000'],
+      [0,     6, '000000'],
+      [123,   6, '000123'],
+      [123,   3, '123'],
+      [100,   6, '000100'],
+      ['010', 6, '000010'],
+    ].each do |given_input, given_length, expected_value|
+      context "when input=#{given_input} and length=#{given_length}" do
+        let(:input) { given_input }
+        let(:length) { given_length }
 
-    context 'when input is an empty string' do
-      let(:input) { '' }
-      it { is_expected.to eq('0' * length) }
-    end
-
-    context 'when input is non-numeric' do
-      let(:input) { 'Not a num' }
-
-      it 'raises an exception' do
-        expect { format_numeric }.to raise_error(ArgumentError, /only digits/)
+        it { is_expected.to eq(expected_value) }
       end
     end
 
-    context 'when input is too length' do
-      let(:input) { ('5' * (length + 1)).to_i }
+    context 'with insufficient length' do
+      let(:input) { 1024 }
+      let(:length) { 3 }
 
-      it 'raises an exception' do
-        expect { format_numeric }.to raise_error(ArgumentError, /length/)
-      end
+      it { expect { subject }.to raise_error(ArgumentError, /Insufficient length/) }
+    end
+
+    context 'when non-numeric' do
+      let(:input) { '12-34' }
+
+      it { expect { format_numeric }.to raise_error(ArgumentError, /only digits/) }
+    end
+
+    context 'when negative' do
+      let(:input) { -34 }
+
+      it { expect { format_numeric }.to raise_error(ArgumentError, /only digits/) }
+    end
+
+    context 'when decimal' do
+      let(:input) { 12.34 }
+
+      it { expect { format_numeric }.to raise_error(ArgumentError, /only digits/) }
     end
   end
 end

@@ -12,7 +12,7 @@ module Fixy
         input = input.to_s
 
         raise ArgumentError, "Invalid Input (only digits are accepted) (input: #{input})" unless input =~ /^\d*$/
-        raise ArgumentError, "Not enough length (input: #{input}, length: #{length})" if input.length > length
+        raise ArgumentError, "Insufficient length for provided input (input: #{input}, length: #{length}, required length: #{input.length})" if input.length > length
 
         input.rjust(length, '0')
       end
