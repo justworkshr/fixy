@@ -1,3 +1,7 @@
+## v0.4.0
+
+* Make fixy compatible with frozen string input
+
 ## v0.3.0
 
 * Include class and field name when a field fails validation or raises an error
